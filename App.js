@@ -48,19 +48,29 @@ export default class App extends React.Component {
   }
 
   render() {
+    let nextTextStyle = {};
+    let previousTextStyle = {};
+
+    if (this.state.clickerState === 'next') {
+      nextTextStyle = styles.selectedText;
+      previousTextStyle = styles.unselectedText;
+    } else if (this.state.clickerState === 'previous') {
+      nextTextStyle = styles.unselectedText;
+      previousTextStyle = styles.selectedText;
+    }
+
     return (
       <View style={styles.container}>
-          <Text>Current State: {this.state.clickerState}</Text>
           <View style={styles.previousContainer}>
             <TouchableOpacity style={styles.touchableArea} onPress={this.previous}>
-              <Text style={styles.buttonText}>
+              <Text style={previousTextStyle}>
                 Previous  
               </Text>  
             </TouchableOpacity>
           </View>
           <View style={styles.nextContainer}>
             <TouchableOpacity style={styles.touchableArea} onPress={this.next}>
-              <Text style={styles.buttonText}>
+              <Text style={nextTextStyle}>
                 Next
               </Text>  
             </TouchableOpacity>
@@ -88,9 +98,13 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'steelblue',
+    backgroundColor: 'rgb(181, 183, 178)',
   },
-  buttonText: {
+  selectedText: {
+    fontSize: 60,
+    color: 'rgb(199, 204, 193)'
+  },
+  unselectedText: {
     fontSize: 60,
     color: 'white',
   }
