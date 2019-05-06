@@ -16,19 +16,26 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
-    // Store the reference to the clicker state from the database
-    let clickerStateRef = firebaseDb.ref('clicker_state');
-    this.setState({
-      clickerStateRef: clickerStateRef
-    });
+    let clickerStateRef = firebaseDb.ref('clicker');
 
     // Set up listener for changes to the clicker state
-    clickerStateRef.on('value', updates => {
+    let clickerValueChangeRef = clickerStateRef.on('value', updates => {
       this.setState({
-        clickerState: updates.val()
+        clickerState: updates.val().state
       })
     });
 
+    // Store the reference to the clicker state for setting
+    // of click value.
+    // Store clicker change value for tear down on unmount.
+    this.setState({
+      clickerStateRef: clickerStateRef,
+      clickerValueChangeRef: clickerValueChangeRef
+    });
+  }
+
+  componentWillUnmount() {
+    this.state.clickerStateRef.off('value', this.state.clickerValueChangeRef);
   }
 
   next() {
@@ -40,7 +47,11 @@ export default class App extends React.Component {
   }
 
   _setClickerState(state) {
-    this.state.clickerStateRef.set(state, error => {
+    let updatedState = {
+      state: state,
+      timestamp: Date.now()
+    };
+    this.state.clickerStateRef.set(updatedState, error => {
       if (error) {
         console.log('ERROR: ' + error)
       }
